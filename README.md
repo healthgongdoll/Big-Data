@@ -156,3 +156,243 @@ Multihash
   - Compute freuqent item for each node 
 - Toivonen 
 
+![image](https://user-images.githubusercontent.com/79100627/195673540-c754f884-8f26-4e56-9b06-b9f3ebf09cec.png)
+
+First of all, we have to find a frequent items before we find the frequent pairs 
+
+Frequent Items are Cat, And, Dog, A, Training 
+
+Generated candidate pairs (cat,and), (cat,dog), (cat, a) (cat, training), (and,dog),(and,a), (and, training), (dog,a), (dog, training), (a,training) 
+
+Frequent Pairs are (Cat,and), (cat dog), (cat a), (and, dog), (dog,a) 
+
+What is the confidence ((cat,dog) -> and)?
+
+Confidence = Support(i U j) / Support (i) = 3/5
+Intrest rate? = Conf(i -> j) - prob(j) = 3/5 - 4/8
+
+Intrest (dog -> cat) ? - Confi(dog->cat) = 5/7 - 6/8 
+
+## Finding Similar Items 
+
+High Dimensions (X1,...,Xi) we need distance 
+
+Find all pairs of data point (xi,xj) that are d(xi,xj) =< s 
+
+## Jaccard Simialrity 
+
+Sim(C1,C2) = (C1 n C2)/(C1 U C2) 
+Distance = 1- Sim(C1,C2) 
+
+## Finding Similar Items 
+
+3 Steps required:
+1. Shingling - Convert to sets
+2. Min Hashing - Convert to it's Signature
+3. Locality Hashing - Compare pair of signature 
+
+## K Shingles 
+
+D1 = abcab -> (ab) (bc) (ca) 
+
+Represent a document by the set of map values of its k-shingles to reduce. We reduce hash value h1(D1) = {1,5,7}
+
+K should be 5 for smaller documents, 10 for the large documents 
+
+Min Hash -> Encoding sets are (0/1) 
+
+D1= 10111, D2 = 10011 What is the Jaccard Similarity? 3/4
+
+## Min Hashing 
+![image](https://user-images.githubusercontent.com/79100627/195681963-1ba91cac-0c0a-4af5-8972-c33dde3ca107.png)
+
+If Sim(C1,C2) = H(C1,C2) likely two documents are same documents 
+If Sim(C1,C2) != H(C1,C2) likely two documents are not same documents 
+
+We need Random Permutation Pi
+
+![image](https://user-images.githubusercontent.com/79100627/195682225-cdca8507-150c-4a4e-94b7-78a5c3f9c896.png)
+
+Let's Compute the signature 
+
+```
+D1 D2 D3 D4
+2  1  2  1
+2  1  4  1 
+1  2  1  2
+
+D1 = 2 2 1 
+D2 = 1 1 2 
+D3 = 2 4 1 
+D4 = 1 1 2 
+
+Sim (D1,D2) = 0
+Sim (D1,D3) = 2/3
+Sim (D1,D4) = 0 
+Sim (D2,D3) = 0 
+Sim (D2,D4) = 1
+Sim (D3,D4) = 0 
+
+Actual Column 
+Sim (D1,D2) = 0 
+Sim (D1,D3) = 3/4
+Sim (D1,D4) = 0 
+Sim (D2,D3) = 0 
+Sim (D2,D4) = 3/4
+Sim (D3,D4) = 0
+```
+
+## Locality Sensitivity Hashing 
+- Find the document with Jaccard Sim at least s 
+- Arrange similar colums hash into same bucket 
+
+Choose 20 Bands and 5 R whose s>= 0.8 
+
+Probability C1,C2 is identical in one particular band </br>
+(0.8)^5</br>
+Probability C1,C2 is not similar in 20 bands</br> 
+(1-(0.8)^5)^20 </br>
+
+## Formula for Locality Sensitivity Hashing
+
+Columns C1 and C2 have similarity t 
+
+### Probability that all rows in band are equal 
+
+t^r
+
+### Probability that some row in band are unequal 
+
+1-t^r
+
+### Probability that no bands Identical 
+
+(1-(t^r)^b
+
+### Probability that at least one bands Identical
+
+(1-(1-(t^r))^b)
+
+## Exercises 
+
+![image](https://user-images.githubusercontent.com/79100627/195688833-b7969e44-7e42-475a-a60e-9f81de21b5be.png)
+
+What is the Jaccard Similarity of this?
+
+3/7 
+
+## Clustering
+
+Set of point, with a notion of distance between points, group of the points into some number of clusters, so that 
+- members of a cluster are close/similar to each other 
+- member of a different clusters are dissimilar 
+
+Why is it hard? 
+-> Clustering in two dimension looks easy 
+-> Clustering small amounts of data looks easy 
+-> If it goes bigger data set it will be harsh 
+
+## Method of Distances 
+
+Set as Sets -> Jaccard Distances 
+Set as Vectors -> Cosine Distinace 
+Set as Points -> Euclidean Distance 
+
+## Euclidean Distance 
+
+d(q,p) = sqrt((q1-p1)^2+...+(qi - pi)^2)
+
+## Hierarchical Clustering 
+
+Agglomerative 
+- Each point of cluster
+- Repeatedly combine two nearest clusters 
+- We have to calculate the centroid 
+
+## Non Euclidean Cases
+
+- There is no average between two points 
+- Clustroid -> "Cloestest" to other points 
+  - Treat Clustroid as if it were centroid 
+- Nearness of Clusters 
+1. Treat Clusteroid as if it were centroid 
+2. Minimum of the distance between any two points 
+3. Pick a notion of "cohesion" of clusters (Maximum distance between any two points, one from each clusters) 
+
+## K mean clustering 
+
+- Assume Euclidean Space Distance 
+- Start by picking k, the number of cluster
+- Initialize cluster by picking one point cluster 
+
+## Populating Clusters 
+
+1. For each point, place it in the cluster whose current centroid it is nearest 
+2. After all points, are assigned, update the locations of centroids of the K Clusters 
+3. Reassign all points to their closest centroid 
+
+## How to select K?
+
+1. Try different k, looking at the change in the average distance to centroid as K increases 
+2. Average fall rapidly until right k, then changes little 
+
+Let's Say we have following points:
+
+2,3,5,8,15.21,25,29
+
+Picked three random points 3,5,15
+
+### Pass1
+
+3:2 <br/>
+5:8 <br/>
+15:21,25,29 <br/>
+
+### Pass2 
+
+3:2,5
+7:8,15
+23:21,25,29
+
+### Pass3 
+
+3:2,5
+12: 8,15
+25: 21,29
+
+## BFR Algorithm - Normally Distributed 
+
+A variant of K-means desgined to handle very large data set O(Clusters)
+
+- Points are read from disk into main-memory
+- Most points from previous memory loads are summarized by simple statistic 
+- To begin, from the initial load, we select the initial K centroid by some sensible approach 
+  - Take K random point
+  - Take Small Random Sample and Cluster optionally 
+  - Take a sample i pick a random point and then K-1 more points 
+  
+  BFR Stores Following
+  ```
+  N - Number of Points
+  SUM - Sum of coordinates
+  SUMSQ - Sum of Squares of coordinates
+  Centroid - Centorid 
+  Var - Variance of coordinates 
+  
+  N = (3,5) (2,1) 
+  SUM = (3+2,5+1)
+  SUMSQ = (3^2+ 2^2, 5^2 + 1^2) = (13,26) 
+  Centroid = (3+2/2, 5+1/2) = (2.5,3) 
+  Var = SUMSQ/n - (SUM/n)^2 for each x and y (13/2)-(5/2)^2 (first Var) (26/2) - (6/2)^2 (second Var) 
+
+  ```
+
+Mahlanobis Distance 
+
+Point (X1,...Xi) and Centroid (C1,...Cd) 
+
+d(x,c) = sqrt((xi-ci)^2/standardDIv(sqrt(var)))
+
+Combine, if the combined variance is below some threshold 
+
+
