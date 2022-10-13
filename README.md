@@ -58,29 +58,29 @@ Step 2. Rule generation : If I is frequent, A is also frequent
 
 ![image](https://user-images.githubusercontent.com/79100627/195441070-42653621-1a8f-4810-af49-777ef4fe8c58.png)
 
-Items sets that are above the threshold 
-Items: m, c, b, j
-Pair item candidate N*(N-1)/2 = {m,c}, {m,b}, {m,j}, {c,b}, {c,j}, {b,j}
-Pair item counts = {m,c,3}, {m,b,4}, {m,j,2}, {c,b,5}, {c,j,3}, {b,j,2}
-Confidence of frequent pairs 
-Conf(m->c) = Support(m U c) / support(m) = 3/5
-Conf(m->b) = Support(m U b) / support(m) = 4/5
-Conf(m->j) = Support(m U j) / support(m) = 2/5
-Conf(c->b) = Support (c U b) / support(c) = 5/5 
-Conf(c->j) = Support (c U j) / support(c) = 3/5
-Conf(b->j) = Support (b U j) / support(b) = 2/6
+Items sets that are above the threshold <br/>
+Items: m, c, b, j <br/>
+Pair item candidate N*(N-1)/2 = {m,c}, {m,b}, {m,j}, {c,b}, {c,j}, {b,j}<br/>
+Pair item counts = {m,c,3}, {m,b,4}, {m,j,2}, {c,b,5}, {c,j,3}, {b,j,2}<br/>
+Confidence of frequent pairs <br/>
+Conf(m->c) = Support(m U c) / support(m) = 3/5<br/>
+Conf(m->b) = Support(m U b) / support(m) = 4/5<br/>
+Conf(m->j) = Support(m U j) / support(m) = 2/5<br/>
+Conf(c->b) = Support (c U b) / support(c) = 5/5 <br/>
+Conf(c->j) = Support (c U j) / support(c) = 3/5<br/>
+Conf(b->j) = Support (b U j) / support(b) = 2/6<br/>
 
 overall, m->b, m->c, b->c, c->j 
 
 ## Maximal Frequent Itemset -> s = 3 (Only count the Superset) 
 
-A - 4  (NO)
-B - 5 (NO)
-C - 3 (NO)
-AB - 4 (Yes)
-AC - 2 x
-BC - 3 (Yes)
-ABC - 2 x
+A - 4  (NO)<br/>
+B - 5 (NO)<br/>
+C - 3 (NO)<br/>
+AB - 4 (Yes)<br/>
+AC - 2 x<br/>
+BC - 3 (Yes)<br/>
+ABC - 2 x<br/>
 
 
 ## Counting Pairs
@@ -124,4 +124,35 @@ Pass2
 Another approach is to replace buckets by a bit-vector:
 - 1 means the bucket count exceeded the support s (call it a frequent bucket); 0 means it did not 
 
+## Multistage Algorithm 
+
+Limit the number of candidate to be counted 
+- For Big amount of data, the Main memory is the bottleneck 
+- Still need to generate all itemsets but we only want to count/ keep track of that are frequent 
+
+After Pass 1 of PCY, rehash only those pairs that qualify for pass 2 
+
+Require three passes 
+
+## Multistage vs Multihash 
+
+Multistage 
+- 3 Passes
+- Bit-Vector eventually consume all main memory 
+
+Multihash 
+- Use Several Hashtables on first stage 
+- Having number of buckets doubles average count 
+- 2 Passes 
+
+## Frequent Itemset in <= 2 passes
+
+- Random Sampling
+  - Take Random sample (Portion of Basket) 
+  - Smaller Threshold 
+  - Itemset become a candidate if it is found to be frequent 
+- SON 
+  - distributed data mining 
+  - Compute freuqent item for each node 
+- Toivonen 
 
