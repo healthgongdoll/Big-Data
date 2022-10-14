@@ -364,15 +364,32 @@ Picked three random points 3,5,15
 
 A variant of K-means desgined to handle very large data set O(Clusters)
 
+Assumes that clusters are normally disbritubed around a centroid in a Eulidean space
+- Standard deviations in different dimensions may vary 
+
+Eficient way to summarize summarize clusters 
+
 - Points are read from disk into main-memory
 - Most points from previous memory loads are summarized by simple statistic 
+![image](https://user-images.githubusercontent.com/79100627/195867129-92bdaa4b-4c98-4b25-830c-30fd5babe962.png)
+
+This is very large dataset divided into chuncks, and these chunk will summarized by simple statistics 
+
 - To begin, from the initial load, we select the initial K centroid by some sensible approach 
-  - Take K random point
-  - Take Small Random Sample and Cluster optionally 
-  - Take a sample i pick a random point and then K-1 more points 
+  - Take K random points
+  - Pick 1 random point and then k-1 more points, each as far from the previously selected points as possible (One point should be far away as much as possible. Keep the K point as spread as possible)
+  - Take a random sample and cluster with (K-mean clustering or heirarachical clustering)
+  - Now we have initial k centroids and statistics
+
+we maintain 3 sets of point
+
+DS (Discard Set): Points close enough to a centroid to be summarized 
+CS (Compression set): Group of points that are close together but not close to any existing centroid. These points are summarized, but not assigned to a cluster 
+RS (Isolated Points): Waiting to be assigned to a compression set 
   
-  BFR Stores Following
+  BFR Stores Following- For each discard set, 
   ```
+  2d + 1 values represent a cluster of any size (d = number of dimensions) 
   N - Number of Points
   SUM - Sum of coordinates
   SUMSQ - Sum of Squares of coordinates
@@ -398,6 +415,8 @@ A variant of K-means desgined to handle very large data set O(Clusters)
 5. If this is the last round (last chunck of data), merge all compressed sets in the CS and all RS points into their nearest cluster (or treat them as outliers)
 
 ## Mahlanobis Distance 
+
+It is to determine whether to put a new point into a cluster 
 
 Point (X1,...Xi) and Centroid (C1,...Cd) 
 
