@@ -386,13 +386,56 @@ A variant of K-means desgined to handle very large data set O(Clusters)
   Var = SUMSQ/n - (SUM/n)^2 for each x and y (13/2)-(5/2)^2 (first Var) (26/2) - (6/2)^2 (second Var) 
 
   ```
+  
+## Memory Load of Points
 
-Mahlanobis Distance 
+1. Find those points that are sufficiently close to a cluster centroid and add those points to that cluster and the DS
+2. Use any main-memory clustering algorithm to cluster the remaining points and the old RS 
+- Clusters go to the CS; outlying points to the RS 
+3. DS set: Adjust statistics of the clusters to account for the new points 
+- Add Ns, SUMs, SUMSQs 
+4. Consider merging compressed sets in the CS 
+5. If this is the last round (last chunck of data), merge all compressed sets in the CS and all RS points into their nearest cluster (or treat them as outliers)
+
+## Mahlanobis Distance 
 
 Point (X1,...Xi) and Centroid (C1,...Cd) 
 
 d(x,c) = sqrt((xi-ci)^2/standardDIv(sqrt(var)))
 
-Combine, if the combined variance is below some threshold 
+Combine, if the combined variance is below some threshold  
+
+- Accept a point for a cluster if its M.D. is < some threshold, e.g. 2 standard deviations 
+
+### Should 2 CS subclusters be combined? 
+- Compute the variance of the combined subcluster 
+  - N, SUM, and SUMSQ allow us to make that claculation quickly 
+- Combine if the combined variance is below some threshold 
+
+## CURE Algorithm 
+
+Problem with BFR:
+- Assumes clusters are normally distributed in each dimension 
+- Axes are fixed - ellipses at an angle are not OK 
+
+- Assumes a Eclidean DIstance 
+- Allows clusters to assume any shape 
+- Uses a collection of representative points to represent clusters 
+
+### 2 Pass Algorithm 
+
+## Pass 1 
+1. Pick random sample points that fit in main memory 
+2. Initial Clusters 
+- Cluster these points hierarchically - group nearest points/clusters 
+3. Pick representative points: 
+- For each cluster, pick a sample of points, as dispersed as possible 
+- For the sample, pick representatives by moving them 20% toward the centroid of the cluster
+
+Pass 2
+Now, rescan the whole dataset and visit each point p in the data set 
+
+Place it in the closest cluster 
+- Normal definition of closest find the cloest representative to p and assign it to representative's cluster 
 
 
